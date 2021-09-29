@@ -1,19 +1,20 @@
 let g:modesearch#is_prompt_active = v:false
 let s:search_mode = 'rawstr'
 
-function! modesearch#prompt() abort
+function! modesearch#prompt(is_forward, mode = '') abort
   let g:modesearch#is_prompt_active = v:true
-  let text = s:prompt()
+  let text = s:prompt(a:mode)
   let g:modesearch#is_prompt_active = v:false
   " cancel
   if text is# "\<Nul>"
     return
   endif
+  let search_cmd = a:is_forward ? '/' : '?'
   " 再検索
   if text is# ""
-    return "/\<CR>"
+    return search_cmd .. "\<CR>"
   endif
-  return '/' .. modesearch#_query_string(text) .. "\<CR>"
+  return search_cmd .. modesearch#_query_string(text) .. "\<CR>"
 endfunction
 
 function! modesearch#_query_string(cmdline) abort
@@ -24,7 +25,10 @@ function! modesearch#_query_string(cmdline) abort
   endif
 endfunction
 
-function! s:prompt() abort
+function! s:prompt(mode = '') abort
+  if a:mode isnot# ''
+    let s:search_mode = a:mode
+  endif
   let current_mode = s:search_mode
   " TODO: キャンセルと空文字列を区別するより良い方法がないか？
   let text = input({'prompt': '[' .. s:search_mode .. ']/', 'cancelreturn': "\<Nul>" })
