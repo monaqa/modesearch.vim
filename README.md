@@ -15,4 +15,4 @@ cmap <C-x> <Plug>(modesearch-toggle-mode)
 
 ## Demo
 
-![](https://twitter.com/i/status/1443056437471551490)
+![demo-mode-search](https://user-images.githubusercontent.com/48883418/135260785-ad90de8f-7a6e-46a0-beb0-10f04eefc8c3.gif)
