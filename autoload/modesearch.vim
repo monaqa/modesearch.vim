@@ -1,6 +1,20 @@
 let g:modesearch#is_prompt_active = v:false
 let s:search_mode = 'rawstr'
 
+if has('nvim')
+  function! s:input(opts) abort
+    return input(a:opts)
+  endfunction
+else
+  function! s:input(opts) abort
+    let prompt = get(a:opts, 'prompt', '')
+    let text = get(a:opts, 'default', '')
+    let cancelreturn = get(a:opts, 'cancelreturn', '')
+
+    return inputdialog(prompt, text, cancelreturn)
+  endfunction
+endif
+
 function! modesearch#prompt(is_forward, mode = '') abort
   let g:modesearch#is_prompt_active = v:true
   let text = s:prompt(a:mode)
@@ -31,11 +45,11 @@ function! s:prompt(mode = '') abort
   endif
   let current_mode = s:search_mode
   " TODO: キャンセルと空文字列を区別するより良い方法がないか？
-  let text = input({'prompt': '[' .. s:search_mode .. ']/', 'cancelreturn': "\<Nul>" })
+  let text = s:input({'prompt': '[' .. s:search_mode .. ']/', 'cancelreturn': "\<Nul>" })
   " 中で s:search_mode が変わったらもう一度 prompt を出す
   while s:search_mode !=# current_mode
     let current_mode = s:search_mode
-    let text = input({'prompt': '[' .. s:search_mode .. ']/', 'cancelreturn': "\<Nul>", 'default': text})
+    let text = s:input({'prompt': '[' .. s:search_mode .. ']/', 'cancelreturn': "\<Nul>", 'default': text})
   endwhile
   return text
 endfunction
